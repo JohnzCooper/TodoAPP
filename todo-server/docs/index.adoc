@@ -1,0 +1,485 @@
+= Todo Application With React Tailwind CSS and Story Book
+Author : Amila Samaranayake
+:description: This Project is a simple RESTful API developed using NodeJS - Express application with Typescript, MongoDB as database and Client Application is developed by React, Tailwind CSS and Story Book. Client Applicatication is build with Atomic Design Principles.
+:keywords: NodeJs, Typescript, MongoDB, RestAPI, React, Tailwind CSS, Story Book
+:page-description: {description}
+:page-keywords: {keywords}
+:page-layout: docs
+ifndef::env-site[]
+:toc: left
+:icons: font
+:idprefix:
+:idseparator: -
+:sectanchors:
+:source-highlighter: highlightjs
+endif::[]
+:experimental:
+:mdash: &#8212;
+:language: asciidoc
+:source-language: {language}
+:table-caption!:
+:example-caption!:
+:figure-caption!:
+:imagesdir: ./images
+// Refs
+:url-github: https://github.com/JohnzCooper/TodoAPP.git
+
+This Project is a simple *RESTful API* developed using *NodeJS - Express* application with *Typescript*, *MongoDB* as database and Client Application is developed by *React*, *Tailwind CSS* and *Story Book*. Client Applicatication is build with *Atomic Design Principles*. + 
+
+TIP: You can find the Github repo in {url-github}[TodoApp].
+
+In this document:
+
+- The introduction and the structure of the Todo App
+- Prerequisite and local installation guide
+- Application run and test guide
+- Describe assumption and dependencies
+
+Let's dive in to Todo App!
+
+== Introduction 
+
+This is a simple Rest API to work with simple Todo Model. HTTP methods: GET, POST, PUT, Delete which correspond to Read, Create, Update, Delete respectively. 
+
+Server application source code structure
+
+image::codestructure.png[] 
+
+
+== Prerequisite and local installation guide
+
+Primary requirements for the project are Node installed on your environment.
+
+TIP: Open up a terminal and run following commands to check primary requirements  + 
+`node -v` : If Node installed you will get the Node version  + 
+
+=== Server Application
+
+1. Download or clone source code from github {url-github}[https://github.com/JohnzCooper/TodoAPP.git]
+2. Open the source via a code editor or cmd
+3. Run `yarn install` or `npm install`
+4. Next step is to build the project with typescript (`yarn install` or `npm install` will install all the modules including Typescript Compiler (tsc), If you are having issues with Typescript compiler please try to install it globally `yarn global add typescript` or `npm install -g typescript` ) 
+`yarn build` or `npm run build` this will create `./dist` directory. `./dist` folder is git ignored. 
+5. To run the application, need to create `.env` file in root directory to set environment variables for the application.`.env` should setup with 
++
+--
+----
+PORT=4000
+DBHOST=localhost
+DBPORT=27017
+DBNAME=todoDB
+----
+
+NOTE: Assume all these `environment variables` will be set by pipeline. Since we don't have an actual pipeline we can simulate this using `.env` file. `.env` file already ignored by git.
+--
+6. Run `yarn start` or `npm run start` (server will start with the given `SERVER_PORT` (eg: http://localhost:4000/))
+
+==== Development Scripts 
+
+    * `yarn build` or `npm run build` : To build typescript files and this will create `/dist` directory.
+    * `yarn clean` or `npm run clean` : To clean `./dist` directory .
+    * `yarn start` or `npm run start` : To Clean,Build and Start the application.
+
+=== Client Application
+
+1. Download or clone source code from github {url-github}[https://github.com/JohnzCooper/TodoAPP.git]
+2. Open the source via a code editor or cmd
+3. Run `yarn install` or `npm install`
+
+
+==== Development Scripts
+
+    * `yarn build` or `npm run build` : To build React production build and this will create `/build` directory.
+    * `yarn start` or `npm run start` : To Start the client application.
+    * `yarn test` or `npm run test` : To run the Unit Tests.
+    * `yarn storybook` or `npm run storybook` : To run the Story Book.
+    * `yarn build-storybook` or `npm run build-storybook` : To build the Story Book.
+
+== Application endpoint and test guide
+
+=== Available API Endpoints
+
+* URLs: + 
+`/api/v1/todos` + 
+`/api/v1/todos/:id`
+
+* Methods: + 
+GET | POST | PUT | DELETE
+
+* URL Params: + 
+** Required: 
+*** `/api/v1/todos/` -  POST + 
+
+*** `/api/v1/todos/:id` - GET (Get One) | PUT + 
+    `id=[alphanumeric]` + 
+
+
+* Database Model:
+** TodoSchema: 
++
+--
+[source]
+----
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+
+        description: {
+            type: String,
+            required: true,
+        },
+
+        completed: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    { timestamps: true }
+----
+--
+
+== TODO APP API Operations
+
+=== Add Todo
+** URL : `/api/v1/todos/`
+** Request Method : `POST`
+** Request Body : Todo JSON Object
++
+--
+[source]
+----
+{
+    "name": "test todo 1",
+    "description": "This is a test todo api first insert",
+    "complete": false
+}
+----
+--
+** Response : Inserted Todo and All Todos Object (JSON) and Message "Todo added"
++
+--
+[source]
+----
+Status: 201 Created
+----
+[source]
+----
+{
+    "message": "Todo added",
+    "todo": {
+        "_id": "60c0952ddad14f36743d3ecf",
+        "name": "test todo 1",
+        "description": "This is a test todo api first insert",
+        "completed": false,
+        "createdAt": "2021-06-09T10:17:17.996Z",
+        "updatedAt": "2021-06-09T10:17:17.996Z",
+        "__v": 0
+    },
+    "todos": [
+        {
+            "_id": "60c0828cbce1261ab01bc1cf",
+            "name": "Test Todo 1",
+            "description": "This is the first todo",
+            "completed": true,
+            "createdAt": "2021-06-09T08:57:48.011Z",
+            "updatedAt": "2021-06-09T08:58:09.675Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0829cbce1261ab01bc1d0",
+            "name": "Test Todo 2",
+            "description": "This is the second todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:04.401Z",
+            "updatedAt": "2021-06-09T08:58:04.401Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c082bbbce1261ab01bc1d1",
+            "name": "Test Todo 3",
+            "description": "This is the third todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:35.161Z",
+            "updatedAt": "2021-06-09T08:58:35.161Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0952ddad14f36743d3ecf",
+            "name": "test todo 1",
+            "description": "This is a test todo api first insert",
+            "completed": false,
+            "createdAt": "2021-06-09T10:17:17.996Z",
+            "updatedAt": "2021-06-09T10:17:17.996Z",
+            "__v": 0
+        }
+    ]
+}
+----
+--
+
+=== Update Todo
+** URL : `/api/v1/todos/:id` => `/api/v1/todos/60c0952ddad14f36743d3ecf`
+** Request Method : `PUT`
+** Request Data Object : Todo JSON Object
++
+--
+[source]
+----
+{
+    "completed": false
+}
+----
+--
+
+** Response : Updated and all Todo Objects (JSON)
++
+--
+[source]
+----
+Status: 200 OK
+----
+[source]
+----
+{
+    "message": "Todo updated",
+    "todo": {
+        "_id": "60c0952ddad14f36743d3ecf",
+        "name": "test todo 1",
+        "description": "This is a test todo api first insert",
+        "completed": false,
+        "createdAt": "2021-06-09T10:17:17.996Z",
+        "updatedAt": "2021-06-09T10:17:17.996Z",
+        "__v": 0
+    },
+    "todos": [
+        {
+            "_id": "60c0828cbce1261ab01bc1cf",
+            "name": "Test Todo 1",
+            "description": "This is the first todo",
+            "completed": true,
+            "createdAt": "2021-06-09T08:57:48.011Z",
+            "updatedAt": "2021-06-09T08:58:09.675Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0829cbce1261ab01bc1d0",
+            "name": "Test Todo 2",
+            "description": "This is the second todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:04.401Z",
+            "updatedAt": "2021-06-09T08:58:04.401Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c082bbbce1261ab01bc1d1",
+            "name": "Test Todo 3",
+            "description": "This is the third todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:35.161Z",
+            "updatedAt": "2021-06-09T08:58:35.161Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0952ddad14f36743d3ecf",
+            "name": "test todo 1",
+            "description": "This is a test todo api first insert",
+            "completed": true,
+            "createdAt": "2021-06-09T10:17:17.996Z",
+            "updatedAt": "2021-06-09T10:26:46.908Z",
+            "__v": 0
+        }
+    ]
+}
+----
+--
+
+=== Get All Todos
+** URL : `/api/v1/todos`
+** Request Method : `GET`
+** Response : List of Todos (JSON)
++
+--
+[source]
+----
+Status: 200 OK
+----
+[source]
+----
+{
+    "todos": [
+        {
+            "_id": "60c0828cbce1261ab01bc1cf",
+            "name": "Test Todo 1",
+            "description": "This is the first todo",
+            "completed": true,
+            "createdAt": "2021-06-09T08:57:48.011Z",
+            "updatedAt": "2021-06-09T08:58:09.675Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0829cbce1261ab01bc1d0",
+            "name": "Test Todo 2",
+            "description": "This is the second todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:04.401Z",
+            "updatedAt": "2021-06-09T08:58:04.401Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c082bbbce1261ab01bc1d1",
+            "name": "Test Todo 3",
+            "description": "This is the third todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:35.161Z",
+            "updatedAt": "2021-06-09T08:58:35.161Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0952ddad14f36743d3ecf",
+            "name": "test todo 1",
+            "description": "This is a test todo api first insert",
+            "completed": true,
+            "createdAt": "2021-06-09T10:17:17.996Z",
+            "updatedAt": "2021-06-09T10:26:46.908Z",
+            "__v": 0
+        }
+    ]
+}
+----
+--
+
+=== Delete Todo
+
+** URL : `/api/v1/todos/:code` => `/api/v1/todos/60c0952ddad14f36743d3ecf`
+** Request Method : `delete`
+** Response : Requested Todo Object (JSON)
++
+--
+[source]
+----
+Status: 200 OK
+----
+[source]
+----
+{
+    "message": "Todo deleted",
+    "todo": {
+        "_id": "60c0952ddad14f36743d3ecf",
+        "name": "test todo 1",
+        "description": "This is a test todo api first insert",
+        "completed": true,
+        "createdAt": "2021-06-09T10:17:17.996Z",
+        "updatedAt": "2021-06-09T10:26:46.908Z",
+        "__v": 0
+    },
+    "todos": [
+        {
+            "_id": "60c0828cbce1261ab01bc1cf",
+            "name": "Test Todo 1",
+            "description": "This is the first todo",
+            "completed": true,
+            "createdAt": "2021-06-09T08:57:48.011Z",
+            "updatedAt": "2021-06-09T08:58:09.675Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c0829cbce1261ab01bc1d0",
+            "name": "Test Todo 2",
+            "description": "This is the second todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:04.401Z",
+            "updatedAt": "2021-06-09T08:58:04.401Z",
+            "__v": 0
+        },
+        {
+            "_id": "60c082bbbce1261ab01bc1d1",
+            "name": "Test Todo 3",
+            "description": "This is the third todo",
+            "completed": false,
+            "createdAt": "2021-06-09T08:58:35.161Z",
+            "updatedAt": "2021-06-09T08:58:35.161Z",
+            "__v": 0
+        }
+    ]
+}
+----
+--
+
+=== Basic API Error Messages
+
+--
+[source]
+----
+Response Body : { hint: "Hint of error" , error: {error Object} } | Status : 400
+----
+--
+
+=== Api Logger
+* This application support two types of logger transports
+** Console : + 
+    This is for debug level logs.
+** File : + 
+    All info level logs will be stored in a log file (`./logs/server.log`). This file is ignored from git.
+
+== Client Application
+image::clientScreen.png[]
+
+* This Client App is based on React Tailwind CSS and Story Book.
+* Atomic design pattern is used for building components.
+* All components have a story book item.
+* Can change colors and screen sizes in tailwind configuration
+
+--
+[source]
+----
+const colors = require('tailwindcss/colors')
+
+module.exports = {
+  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  darkMode: false, // or 'media' or 'class'
+  theme: {
+    screens: {
+      sm: '480px',
+      md: '768px',
+      lg: '976px',
+      xl: '1440px',
+    },
+    extend: {
+      colors: {
+        blue: colors.lightBlue[900],
+        green: colors.green[900],
+        'green-light': colors.green[700],
+        red: colors.red[900],
+        'red-light': colors.red[700]
+      },
+    },
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
+}
+----
+--
+
+=== Code Structure
+
+image::clientStructure.png[]
+
+NOTE: Same value you set to server `PORT` need to be set to the Client Code `/src/api/index.ts` variable `const baseUrl: string = "http://localhost:4000/api/v1"` as it's hardcoded for this scenario.
+Otherwise *server connection will fail*.
+
+== Describe assumption and dependencies
+
+* Unit test are for client application only.
+
+== Documentation
+
+* API document is in `asciidoc` format and It is in the repo.(`/docs` directory).
+* Document URL : + 
+** `/docs` : This will return api documentation index file.
+** `/docs/index.adoc` : This will download the asciidoc file. 
+
+
